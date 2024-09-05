@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Deepfake Detector',
+      title: 'TrueVision',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -65,7 +65,7 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
         _videoFile = File(pickedFile.path);
         _controller = VideoPlayerController.file(_videoFile!)
           ..initialize().then((_) {
-            setState(() {}); // Ensure the first frame is shown.
+            setState(() {});
           });
       });
     }
@@ -80,7 +80,7 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
 
     try {
       var request = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.179.169:3000/api'));
+          'POST', Uri.parse('http://192.168.1.13:3000/api'));
       request.files
           .add(await http.MultipartFile.fromPath('video', _videoFile!.path));
       var res = await request.send();
@@ -119,7 +119,7 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Deepfake Detector',
+              'TrueVision',
               style: TextStyle(fontSize: 20, color: Colors.red.shade300),
             ),
             SizedBox(height: 2),
@@ -131,40 +131,52 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
           ],
         ),
       ),
-      body: Padding(
+      body: Container(
         padding: EdgeInsets.all(16.0),
         child: (_isLoading == false)
             ? Column(
                 children: [
-                  Spacer(),
                   (_videoFile == null)
                       ? Center(
-                          child: InkWell(
-                            onTap: _pickVideo,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.purple.shade100,
-                                  borderRadius: BorderRadius.circular(12)),
-                              height: MediaQuery.of(context).size.height / 4.5,
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              padding: EdgeInsets.all(12),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.video_call_outlined,
-                                    size: 100,
-                                    color: Colors.purple.shade300,
-                                  ),
-                                  Text(
-                                    "Pick Video",
-                                    style: TextStyle(
-                                        color: Colors.purple.shade300,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
+                          child: Column(
+                            children: [
+                              TextWall(),
+                              SizedBox(
+                                height: 32,
                               ),
-                            ),
+                              InkWell(
+                                onTap: _pickVideo,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.purple.shade300,
+                                          width: 2),
+                                      color: Colors.purple.shade100,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  height:
+                                      MediaQuery.of(context).size.height / 4.5,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
+                                  padding: EdgeInsets.all(12),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.video_call_outlined,
+                                        size: 100,
+                                        color: Colors.purple.shade300,
+                                      ),
+                                      Text(
+                                        "Pick Video",
+                                        style: TextStyle(
+                                            color: Colors.purple.shade300,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : _controller != null && _controller!.value.isInitialized
@@ -237,7 +249,19 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
                                             color: Colors.blue.shade300,
                                           )),
                                     ],
-                                  )
+                                  ),
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                          elevation: WidgetStatePropertyAll(0),
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                  Colors.blue.shade50)),
+                                      onPressed: (){},
+                                      child: Text(
+                                        "Generate Report",
+                                        style: TextStyle(
+                                            color: Colors.blue.shade300),
+                                      )),
                                 ],
                               ),
                             )
@@ -275,6 +299,122 @@ class _DeepfakeDetectorState extends State<DeepfakeDetector> {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class TextWall extends StatelessWidget {
+  const TextWall({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        // border: Border.all(color: Colors.purple.shade300, width: 2),
+        color: Colors.purple.shade100,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.arrow_circle_right_rounded,
+                color: Colors.purple.shade300,
+                size: 50,
+              ),
+              SizedBox(width: 4),
+              Text(
+                "Choose Pick Video to feed the model.",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade800),
+              )
+            ],
+          ),
+          SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                Icons.arrow_circle_right_rounded,
+                color: Colors.purple.shade300,
+                size: 50,
+              ),
+              SizedBox(width: 4),
+              Text(
+                "Select glass icon under preview.",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade800),
+              )
+            ],
+          ),
+          SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                Icons.arrow_circle_right_rounded,
+                color: Colors.purple.shade300,
+                size: 50,
+              ),
+              SizedBox(width: 4),
+              Text(
+                "Result generated is then displayed.",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade800),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class TextWallBottomOne extends StatelessWidget {
+  const TextWallBottomOne({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          Icons.arrow_circle_right_rounded,
+          color: Colors.purple.shade300,
+          size: 50,
+        ),
+        SizedBox(width: 4),
+        Text(
+          "Choose Pick Video and select your video.",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade800),
+        )
+      ],
+    );
+  }
+}
+
+class TextWallTop extends StatelessWidget {
+  const TextWallTop({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      """TrueVision is a state of the art deepfake detection model designed by Sinister 6. It accurately detects if a video provided by the user if fake or real. 
+      Go ahead and try it yourself!
+      """,
+      textAlign: TextAlign.justify,
+      style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 18,
+          color: Colors.grey.shade800),
     );
   }
 }
